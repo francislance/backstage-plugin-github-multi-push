@@ -1,0 +1,28 @@
+name: Release to npm
+on:
+  push:
+    tags:
+      - 'v*.*.*'
+
+jobs:
+  publish:
+    runs-on: ubuntu-latest
+    steps:
+      # 1. Check out code
+      - uses: actions/checkout@v3
+
+      # 2. Set up Node.js and authenticate to npm registry
+      - uses: actions/setup-node@v3
+        with:
+          node-version: '20'
+          registry-url: 'https://registry.npmjs.org'
+          scope: '@francislance'
+
+      # 3. Install dependencies & build your plugin
+      - run: yarn install --frozen-lockfile
+      - run: yarn build
+
+      # 4. Publish to npm
+      - run: npm publish
+        env:
+          NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
