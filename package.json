@@ -10,6 +10,8 @@
   ],
   "scripts": {
     "build": "tsc -b",
+    "prepare": "npm run build",
+    "prepublishOnly": "npm test && npm run build",
     "lint": "eslint src --ext .ts",
     "test": "jest"
   },
