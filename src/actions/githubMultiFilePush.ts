@@ -1,17 +1,18 @@
 // plugins/scaffolder-backend-module-github-push-files/src/actions/githubMultiFilePush.ts
 
-import { createTemplateAction, TemplateActionContext } from '@backstage/plugin-scaffolder-node';
+import { createTemplateAction } from '@backstage/plugin-scaffolder-node';
 import { Config } from '@backstage/config';
 import { z } from 'zod';
 import { Octokit } from '@octokit/rest';
 import { globby } from 'globby';
 import { readFile } from 'fs/promises';
-import path from 'path';
+import * as path from 'path';
 
 export const githubMultiFilePush = ({ config }: { config: Config }) =>
     createTemplateAction({
         id: 'github:multi-file-push',
         description: 'Pushes files or folders to GitHub via REST API (no git clone).',
+
         examples: [
             {
                 description: 'Publish dist/ into the `assets/` folder on main',
@@ -49,13 +50,11 @@ steps:
             }),
         },
 
-        async handler(ctx: TemplateActionContext<z.infer<typeof this.schema.input>>) {
+        async handler(ctx) {
             const { repoUrl, branch, sourcePath, targetPath, commitMessage } = ctx.input;
 
             // Ensure URL has a scheme
-            const full = repoUrl.startsWith('http')
-                ? repoUrl
-                : `https://${repoUrl}`;
+            const full = repoUrl.startsWith('http') ? repoUrl : `https://${repoUrl}`;
             const u = new URL(full);
             const owner = u.searchParams.get('owner');
             const repo = u.searchParams.get('repo');
@@ -107,18 +106,16 @@ steps:
                         encoding: 'base64',
                     });
 
-                    const rel = path
-                        .relative(absSource, file)
-                        .replace(/\\/g, '/');
-                    // prefix with targetPath
-                    const repoPath = targetPath === '.'
-                        ? rel
-                        : `${targetPath.replace(/\/+$/, '')}/${rel}`;
+                    const rel = path.relative(absSource, file).replace(/\\/g, '/');
+                    const repoPath =
+                        targetPath === '.'
+                            ? rel
+                            : `${targetPath.replace(/\/+$/, '')}/${rel}`;
 
                     return {
                         path: repoPath,
-                        mode: '100644',
-                        type: 'blob',
+                        mode: '100644' as const,
+                        type: 'blob' as const,
                         sha: blob.sha,
                     };
                 }),
