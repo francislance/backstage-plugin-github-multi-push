@@ -1,0 +1,1 @@
+export { scaffolderModule } from './module';
