@@ -1,6 +1,6 @@
 {
   "name": "@francislance/backstage-plugin-github-multi-push",
-  "version": "0.1.0",
+  "version": "0.1.1",
   "description": "Backstage scaffolder action to push files/folders to GitHub via REST API",
   "main": "lib/index.js",
   "types": "lib/index.d.ts",
